@@ -1,0 +1,44 @@
+{# Presentation/header.twig #}
+<header class="border-b border-gray-200 bg-white">
+    <div class="mx-auto max-w-6xl px-6">
+        <div class="flex h-16 items-center justify-between">
+
+        {# Logo / titel #}
+        <div class="flex items-center gap-2">
+            <span class="text-xl font-bold tracking-tight text-gray-900">
+            Broodjesbar
+            </span>
+        </div>
+
+        {# Navigatie #}
+        <nav class="hidden md:flex items-center gap-6">
+            <a href="index.php" class="text-sm font-medium text-gray-700 hover:text-gray-900">
+            Home
+            </a>
+            <a href="broodjesController.php" class="text-sm font-medium text-gray-700 hover:text-gray-900">
+            Broodjes
+            </a>
+            <a href="bestellingenController.php" class="text-sm font-medium text-gray-700 hover:text-gray-900">
+            Bestellingen
+            </a>
+        </nav>
+
+        {# Rechterkant #}
+        <div class="flex items-center gap-3">
+            <button
+            class="hidden sm:inline-flex rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white
+                    hover:bg-blue-700 active:bg-blue-800">
+            Bestel nu
+            </button>
+
+            {# mobiele menu knop #}
+            <button
+            class="inline-flex items-center justify-center rounded-lg p-2 text-gray-600 hover:bg-gray-100 md:hidden"
+            aria-label="Menu">
+            ☰
+            </button>
+        </div>
+
+        </div>
+    </div>
+</header>

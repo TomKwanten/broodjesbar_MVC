@@ -1,0 +1,163 @@
+{# Presentation/broodjeForm.twig #}
+{% extends 'layout.twig' %}
+
+{% set isEdit = broodje is defined and broodje.id is defined and broodje.id %}
+{% set title = isEdit ? 'Broodje bewerken' : 'Nieuw broodje' %}
+{% set submitLabel = isEdit ? 'Opslaan' : 'Aanmaken' %}
+
+{% block content %}
+  <div class="flex items-start justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-bold tracking-tight">{{ title }}</h1>
+      <p class="mt-1 text-sm text-gray-600">
+        {% if isEdit %}
+          Pas naam, prijs of omschrijving aan en sla op.
+        {% else %}
+          Vul de gegevens in en maak een nieuw broodje aan.
+        {% endif %}
+      </p>
+    </div>
+
+    <div class="shrink-0">
+      <a href="broodjesController.php"
+         class="inline-flex items-center justify-center rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-700
+                hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300">
+        Terug
+      </a>
+    </div>
+  </div>
+
+  {% if errorMessage is defined and errorMessage %}
+    <div class="mt-6 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-800">
+      {{ errorMessage }}
+    </div>
+  {% endif %}
+
+  {% if errors is defined and errors|length %}
+    <div class="mt-6 rounded-2xl border border-red-200 bg-red-50 p-4">
+      <p class="text-sm font-semibold text-red-900">Controleer even dit:</p>
+      <ul class="mt-2 list-disc pl-5 text-sm text-red-800">
+        {% for err in errors %}
+          <li>{{ err }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
+  {# Alleen aanwezig bij edit. #}
+  {% if isEdit %}
+    <form id="deleteForm" method="post" action="broodjeVerwijderenController.php">
+      <input type="hidden" name="id" value="{{ broodje.id }}">
+    </form>
+  {% endif %}
+
+  <div class="mt-8 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+    <div class="border-b border-gray-200 bg-gray-50 px-6 py-4">
+      <p class="text-sm font-medium text-gray-700">Gegevens</p>
+    </div>
+
+    <form method="post" action="{{ formAction is defined ? formAction : '' }}" class="px-6 py-6">
+      {# Hidden ID enkel bij bewerken #}
+      {% if isEdit %}
+        <input type="hidden" name="id" value="{{ broodje.id }}">
+      {% endif %}
+
+      <div class="grid grid-cols-1 gap-6">
+        {# Naam #}
+        <div>
+          <label for="naam" class="block text-sm font-semibold text-gray-900">Naam</label>
+          <input
+            id="naam"
+            name="naam"
+            type="text"
+            value="{{ (old is defined and old.naam is defined) ? old.naam : (broodje is defined ? broodje.naam : '') }}"
+            {# Als old.naam bestaat → gebruik dat. Anders, als broodje.naam bestaat → gebruik dat. Anders → leeg #}
+            placeholder="bv. Martino"
+            class="mt-2 block w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-900
+                   shadow-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300"
+            required
+          >
+          {% if fieldErrors is defined and fieldErrors.naam is defined %}
+            <p class="mt-2 text-sm text-red-700">{{ fieldErrors.naam }}</p>
+          {% endif %}
+        </div>
+
+        {# Omschrijving #}
+        <div>
+          <label for="omschrijving" class="block text-sm font-semibold text-gray-900">Omschrijving</label>
+          <textarea
+            id="omschrijving"
+            name="omschrijving"
+            rows="4"
+            placeholder="Korte omschrijving van het broodje..."
+            class="mt-2 block w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-900
+                   shadow-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300"
+          >{{ (old is defined and old.omschrijving is defined) ? old.omschrijving : (broodje is defined ? broodje.omschrijving : '') }}</textarea>
+          {% if fieldErrors is defined and fieldErrors.omschrijving is defined %}
+            <p class="mt-2 text-sm text-red-700">{{ fieldErrors.omschrijving }}</p>
+          {% endif %}
+        </div>
+
+        {# Prijs #}
+        <div class="sm:max-w-xs">
+          <label for="prijs" class="block text-sm font-semibold text-gray-900">Prijs</label>
+          <div class="mt-2 flex items-center gap-2">
+            <span class="inline-flex items-center rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm font-semibold text-gray-700">€</span>
+            <input
+              id="prijs"
+              name="prijs"
+              type="number"
+              step="0.01"
+              min="0"
+              value="{{ (old is defined and old.prijs is defined) ? old.prijs : (broodje is defined ? broodje.prijs : '') }}"
+              placeholder="bv. 4.50"
+              class="block w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-900
+                     shadow-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300"
+              required
+            >
+          </div>
+          <p class="mt-2 text-xs text-gray-500">Gebruik een punt als decimaal (bv. 4.50).</p>
+          {% if fieldErrors is defined and fieldErrors.prijs is defined %}
+            <p class="mt-2 text-sm text-red-700">{{ fieldErrors.prijs }}</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        {% if isEdit %}
+          <button type="submit"
+            form="deleteForm"
+            onclick="return confirm('Ben je zeker dat je dit broodje wil verwijderen?')"
+            class="inline-flex items-center justify-center rounded-xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white
+                   hover:bg-red-700 active:bg-red-800 focus:outline-none focus:ring-2 focus:ring-red-300">
+            Verwijderen
+          </button>
+        {% else %}
+          <span></span>
+        {% endif %}
+
+        <div class="flex flex-col-reverse gap-3 sm:flex-row sm:items-center">
+          <a href="broodjesController.php"
+             class="inline-flex items-center justify-center rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700
+                    hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300">
+            Annuleren
+          </a>
+
+          <button type="submit"
+            class="inline-flex items-center justify-center rounded-xl bg-gray-900 px-4 py-2.5 text-sm font-semibold text-white
+                   hover:bg-gray-800 active:bg-gray-950 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2">
+            {{ submitLabel }}
+          </button>
+        </div>
+      </div>
+
+      {% if isEdit %}
+        <div class="mt-6 rounded-2xl border border-gray-200 bg-gray-50 p-4">
+          <p class="text-sm text-gray-700">
+            Je bewerkt broodje <span class="font-semibold text-gray-900">#{{ broodje.id }}</span>.
+          </p>
+        </div>
+      {% endif %}
+    </form>
+  </div>
+{% endblock %}

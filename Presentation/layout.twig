@@ -1,0 +1,23 @@
+{# Presentation/layout.twig #}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Broodjesbar</title>
+
+    <link rel="stylesheet" href="/repositories/broodjesbar_MVC/assets/css/output.css?v=dev">
+</head>
+<body class="bg-gray-50 text-gray-900">
+    {% include 'header.twig' %}
+
+    <main class="mx-auto max-w-6xl p-4 sm:px-8 py-10">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="border-t border-gray-200 py-8 text-center text-sm text-gray-500">
+        <p>&copy; 2026 Broodjesbar</p>
+    </footer>
+</body>
+
+</html>
